@@ -1,7 +1,6 @@
 package de.rkable.foomuckl.core;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import de.rkable.foomuckl.core.input.ComeToLife;
