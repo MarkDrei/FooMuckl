@@ -3,6 +3,8 @@ package de.rkable.foomuckl.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.inject.Inject;
+
 import de.rkable.foomuckl.core.input.ComeToLife;
 import de.rkable.foomuckl.core.input.Input;
 import de.rkable.foomuckl.core.input.TimeElapsed;
@@ -25,6 +27,7 @@ public class FooMuckl {
 
 	private Environment environment;
 	
+	@Inject
 	public FooMuckl(Environment environment) {
 		this.environment = environment;
 	}

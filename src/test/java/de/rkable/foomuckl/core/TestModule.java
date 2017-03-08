@@ -2,11 +2,12 @@ package de.rkable.foomuckl.core;
 
 import com.google.inject.AbstractModule;
 
-public class FooModule extends AbstractModule  {
+public class TestModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		bind(Environment.class);
+		bind(Environment.class).toInstance(new TestEnvironment());
+
 	}
 
 }
