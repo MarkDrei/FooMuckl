@@ -57,12 +57,12 @@ public class FooMuckl {
 
 		updateOptions();
 		
-		Entry<Action, Judgment> action = chooseOption();
+		Entry<Action, Judgment> choice = chooseOption();
 		
-		options.remove(action);
-		processJudgment(action.getValue());
+		options.remove(choice.getKey());
+		processJudgment(choice.getValue());
 		
-		environment.reactOnActions(Arrays.asList(action.getKey()));
+		environment.reactOnActions(Arrays.asList(choice.getKey()));
 	}
 
 	

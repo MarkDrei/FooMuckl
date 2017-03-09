@@ -9,7 +9,7 @@ import de.rkable.foomuckl.core.action.judgment.SatisfiesNeed.Need;
 
 public class SpeechHandler extends AbstractActionHandler {
 
-	private static final int BOREDOM_CHANGE = -5000;
+	private static final int BOREDOM_CHANGE = 5000;
 
 	@Override
 	public void handle(Action action) {

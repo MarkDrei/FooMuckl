@@ -3,7 +3,7 @@ package de.rkable.foomuckl.core.action;
 public class SaySomething implements Action {
 
 	private final String speech;
-	private boolean isRelevant;
+	private final boolean isRelevant;
 
 	public SaySomething(String speech, boolean isRelevant) {
 		this.speech = speech;
