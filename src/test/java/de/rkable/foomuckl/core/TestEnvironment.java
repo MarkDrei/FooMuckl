@@ -3,7 +3,8 @@ package de.rkable.foomuckl.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.rkable.foomuckl.core.output.Output;
+import de.rkable.foomuckl.core.action.Action;
+import de.rkable.foomuckl.core.action.judgment.JudgmentCombinator;
 
 /**
  * Simply collects all the outputs
@@ -12,10 +13,15 @@ import de.rkable.foomuckl.core.output.Output;
  */
 public class TestEnvironment extends Environment {
 
-	public List<Output> outputs = new ArrayList<>();
+	public TestEnvironment(JudgmentCombinator judgmentCombinator) {
+		super(judgmentCombinator);
+	}
+
+	public List<Action> outputs = new ArrayList<>();
 	
+
 	@Override
-	public void reactOn(List<Output> outputs) {
+	public void reactOnActions(List<Action> outputs) {
 		this.outputs.addAll(outputs);
 	}
 }

@@ -1,11 +1,11 @@
-package de.rkable.foomuckl.core.input;
+package de.rkable.foomuckl.core.event;
 
 /**
  * This input represents time that has elapsed
  * @author Mark
  *
  */
-public class TimeElapsed implements Input {
+public class TimeElapsed implements Event {
 
 	private int elapsedMillis;
 	

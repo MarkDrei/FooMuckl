@@ -10,10 +10,10 @@ import org.junit.Test;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import de.rkable.foomuckl.core.input.ComeToLife;
-import de.rkable.foomuckl.core.input.TimeElapsed;
-import de.rkable.foomuckl.core.output.Output;
-import de.rkable.foomuckl.core.output.SaySomething;
+import de.rkable.foomuckl.core.action.Action;
+import de.rkable.foomuckl.core.action.SaySomething;
+import de.rkable.foomuckl.core.event.ComeToLife;
+import de.rkable.foomuckl.core.event.TimeElapsed;
 
 public class FooMucklTest {
 
@@ -50,10 +50,10 @@ public class FooMucklTest {
 		Environment environment = injector.getInstance(Environment.class);
 
 		assertTrue(environment instanceof TestEnvironment);
-		List<Output> outputs = ((TestEnvironment) environment).outputs;
+		List<Action> outputs = ((TestEnvironment) environment).outputs;
 		
 		boolean found = false;
-		for (Output output : outputs) {
+		for (Action output : outputs) {
 			if (output instanceof SaySomething) {
 				if (((SaySomething) output).getSpeech().contains(searchPattern)) {
 					found = true;
