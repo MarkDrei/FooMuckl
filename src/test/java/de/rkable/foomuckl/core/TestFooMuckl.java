@@ -1,8 +1,13 @@
 package de.rkable.foomuckl.core;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import org.junit.Before;
@@ -12,8 +17,10 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import de.rkable.foomuckl.core.action.Action;
+import de.rkable.foomuckl.core.action.DoNothing;
 import de.rkable.foomuckl.core.action.SaySomething;
 import de.rkable.foomuckl.core.action.judgment.Judgment;
+import de.rkable.foomuckl.core.action.judgment.NoConsequence;
 import de.rkable.foomuckl.core.event.ComeToLife;
 import de.rkable.foomuckl.core.event.TimeElapsed;
 
@@ -27,10 +34,17 @@ public class TestFooMuckl {
 	}
 	
 	@Test
+	public void testThatFooMucklDoesNothing() {
+		FooMuckl fooMuckl = injector.getInstance(FooMuckl.class);
+		Entry<Action, Judgment> option = fooMuckl.chooseFromOptions();
+		assertTrue(option.getKey() instanceof DoNothing);
+	}
+	
+	@Test
 	public void testThatFooMucklAnnouncesBirth() {
 		FooMuckl fooMuckl = injector.getInstance(FooMuckl.class);
 		fooMuckl.addInput(new ComeToLife());
-		Entry<Action, Judgment> option = fooMuckl.chooseOptions();
+		Entry<Action, Judgment> option = fooMuckl.chooseFromOptions();
 		assertThatSpeachContainsString(option.getKey(), "FooMuckl should anounce that he was born", " born");
 	}
 	
@@ -38,7 +52,7 @@ public class TestFooMuckl {
 	public void testThatFooMucklGetsBored()	{
 		FooMuckl fooMuckl = injector.getInstance(FooMuckl.class);
 		fooMuckl.addInput(new TimeElapsed(20000));
-		Entry<Action, Judgment> option = fooMuckl.chooseOptions();
+		Entry<Action, Judgment> option = fooMuckl.chooseFromOptions();
 		assertThatSpeachContainsString(option.getKey(), "FooMuckl should anounce that he was born", "bored");
 	}
 	
@@ -52,5 +66,23 @@ public class TestFooMuckl {
 	private void assertThatSpeachContainsString(Action action, String message, String searchPattern) {
 		assertTrue(action instanceof SaySomething);
 		assertTrue(((SaySomething) action).getSpeech().contains(searchPattern));
+	}
+	
+	@Test
+	public void testThatFoomucklChoosesTheAvailableOption() {
+		Set<Action> actions = new HashSet<>();
+		actions.add(FooMuckl.DO_NOTHING);
+		Map<Action, Judgment> judgements = new HashMap<>();
+		Judgment judgment = new NoConsequence();
+		judgements.put(FooMuckl.DO_NOTHING, judgment);
+		
+		Environment mock = mock(Environment.class);
+		when(mock.judge(actions)).thenReturn(judgements);
+		
+		FooMuckl fooMuckl = new FooMuckl(mock);
+		Entry<Action, Judgment> option = fooMuckl.chooseFromOptions();
+		
+		assertTrue(option.getKey().equals(FooMuckl.DO_NOTHING));
+		assertTrue(option.getValue().equals(judgment));
 	}
 }

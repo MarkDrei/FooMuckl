@@ -12,7 +12,6 @@ public class TestModule extends AbstractModule {
 	
 	@Override
 	protected void configure() {
-//		bind(Environment.class).toInstance(new TestEnvironment(new JudgmentCombinator()));
 	}
 	
 	@Provides public Environment provideEnvironment() {

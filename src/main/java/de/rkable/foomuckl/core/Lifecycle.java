@@ -45,7 +45,7 @@ public class Lifecycle {
 		fooMuckl.addInput(timeElapsedEvent);
 		
 		// evaluate and process the options
-		Entry<Action, Judgment> evaluateOptions = fooMuckl.chooseOptions();
+		Entry<Action, Judgment> evaluateOptions = fooMuckl.chooseFromOptions();
 		environment.reactOnActions(Arrays.asList(evaluateOptions.getKey()));
 		fooMuckl.applyJudgment(evaluateOptions.getValue());
 	}

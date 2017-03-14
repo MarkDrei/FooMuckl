@@ -32,8 +32,10 @@ import de.rkable.foomuckl.core.event.TimeElapsed;
  */
 public class FooMuckl {
 	
-	private final static Action DO_NOTHING = new DoNothing();
+	final static Action DO_NOTHING = new DoNothing();
 	private final static Action ACTION_BORED = new SaySomething("I am bored!", false);
+	
+	// injected dependencies
 	
 	// needs section
 	int boredom = 0;
@@ -41,16 +43,26 @@ public class FooMuckl {
 	private List<Event> inputs = new ArrayList<>();
 	private Set<Action> options = new HashSet<>();
 
-	@Inject private Environment environment;
+	private Environment environment;
 	
+	@Inject public FooMuckl(Environment environment) {
+		this.environment = environment;
+	}
+	
+	/**
+	 * Added an input. FooMuckl will evaluate all inputs in due time.
+	 * 
+	 * @param input The input to be added 
+	 */
 	public void addInput(Event input) {
 		inputs.add(input);
 	}
 	
 	/**
 	 * Evaluates the current options based on the received inputs
+	 * and returns the action and the predicted outcome.
 	 */
-	public Entry<Action, Judgment> chooseOptions() {
+	public Entry<Action, Judgment> chooseFromOptions() {
 		
 		processInputs();
 
