@@ -1,7 +1,6 @@
 package de.rkable.foomuckl.core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +50,7 @@ public class FooMuckl {
 	/**
 	 * Evaluates the current options based on the received inputs
 	 */
-	public void evaluateOptions() {
+	public Entry<Action, Judgment> chooseOptions() {
 		
 		processInputs();
 
@@ -60,9 +59,7 @@ public class FooMuckl {
 		Entry<Action, Judgment> choice = chooseOption();
 		
 		options.remove(choice.getKey());
-		processJudgment(choice.getValue());
-		
-		environment.reactOnActions(Arrays.asList(choice.getKey()));
+		return choice;
 	}
 
 	
@@ -70,7 +67,7 @@ public class FooMuckl {
 	 * Applies the consequences of a judgment
 	 * @param value
 	 */
-	private void processJudgment(Judgment value) {
+	public void applyJudgment(Judgment value) {
 		if (value instanceof SatisfiesNeed) {
 			boredom -= ((SatisfiesNeed) value).getSatisfaction(Need.NOT_BORED);
 		}

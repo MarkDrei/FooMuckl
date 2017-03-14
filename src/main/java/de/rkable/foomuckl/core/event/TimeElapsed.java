@@ -7,9 +7,9 @@ package de.rkable.foomuckl.core.event;
  */
 public class TimeElapsed implements Event {
 
-	private int elapsedMillis;
+	private long elapsedMillis;
 	
-	public TimeElapsed(int elapsedMillis) {
+	public TimeElapsed(long elapsedMillis) {
 		this.elapsedMillis = elapsedMillis;
 	}
 	
@@ -17,7 +17,7 @@ public class TimeElapsed implements Event {
 	 * 
 	 * @return the elapsed time in milli seconds
 	 */
-	public int getElapsedMillis() {
+	public long getElapsedMillis() {
 		return elapsedMillis;
 	}
 }

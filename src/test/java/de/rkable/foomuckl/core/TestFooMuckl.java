@@ -15,7 +15,7 @@ import de.rkable.foomuckl.core.action.SaySomething;
 import de.rkable.foomuckl.core.event.ComeToLife;
 import de.rkable.foomuckl.core.event.TimeElapsed;
 
-public class FooMucklTest {
+public class TestFooMuckl {
 
 	private Injector injector;
 
@@ -28,7 +28,7 @@ public class FooMucklTest {
 	public void testThatFooMucklAnnouncesBirth() {
 		FooMuckl fooMuckl = injector.getInstance(FooMuckl.class);
 		fooMuckl.addInput(new ComeToLife());
-		fooMuckl.evaluateOptions();
+		fooMuckl.chooseOptions();
 		assertThatSpeachContainsString("FooMuckl should anounce that he was born", " born");
 	}
 	
@@ -36,7 +36,7 @@ public class FooMucklTest {
 	public void testThatFooMucklGetsBored()	{
 		FooMuckl fooMuckl = injector.getInstance(FooMuckl.class);
 		fooMuckl.addInput(new TimeElapsed(20000));
-		fooMuckl.evaluateOptions();
+		fooMuckl.chooseOptions();
 		assertThatSpeachContainsString("FooMuckl should anounce that he was born", "bored");
 	}
 	
