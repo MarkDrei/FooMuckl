@@ -15,8 +15,8 @@ public class JudgmentCombinator {
 		if (two instanceof HumanHarmed) return two;
 		if (one instanceof OrderIgnored) return one;
 		if (two instanceof OrderIgnored) return two;
-		if (one instanceof RotoberHarmed) return one;
-		if (two instanceof RotoberHarmed) return two;
+		if (one instanceof RobotHarmed) return one;
+		if (two instanceof RobotHarmed) return two;
 		
 		if (one instanceof SatisfiesNeed && two instanceof SatisfiesNeed) {
 			return ((SatisfiesNeed) one).combine((SatisfiesNeed) two);

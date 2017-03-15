@@ -16,7 +16,7 @@ import de.rkable.foomuckl.core.action.judgment.HumanHarmed;
 import de.rkable.foomuckl.core.action.judgment.Judgment;
 import de.rkable.foomuckl.core.action.judgment.NoConsequence;
 import de.rkable.foomuckl.core.action.judgment.OrderIgnored;
-import de.rkable.foomuckl.core.action.judgment.RotoberHarmed;
+import de.rkable.foomuckl.core.action.judgment.RobotHarmed;
 import de.rkable.foomuckl.core.action.judgment.SatisfiesNeed;
 import de.rkable.foomuckl.core.action.judgment.SatisfiesNeed.Need;
 import de.rkable.foomuckl.core.event.ComeToLife;
@@ -110,7 +110,7 @@ public class FooMuckl {
 				continue;
 			} else if (value instanceof NoConsequence) {
 				noConsequence = e;
-			} else if (value instanceof RotoberHarmed) {
+			} else if (value instanceof RobotHarmed) {
 				roboterHarmed = e;
 			} else if (value instanceof OrderIgnored) {
 				orderIgnored = e;

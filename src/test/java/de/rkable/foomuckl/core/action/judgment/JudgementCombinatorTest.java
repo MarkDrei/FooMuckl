@@ -14,7 +14,7 @@ public class JudgementCombinatorTest {
 		
 		Judgment judgment = judgmentCombinator.combine(new HumanHarmed(), new HumanHarmed());
 		assertTrue(judgment instanceof HumanHarmed);
-		judgment = judgmentCombinator.combine(new HumanHarmed(), new RotoberHarmed());
+		judgment = judgmentCombinator.combine(new HumanHarmed(), new RobotHarmed());
 		assertTrue(judgment instanceof HumanHarmed);
 		judgment = judgmentCombinator.combine(new OrderIgnored(), new HumanHarmed());
 		assertTrue(judgment instanceof HumanHarmed);
@@ -26,12 +26,12 @@ public class JudgementCombinatorTest {
 		judgment = judgmentCombinator.combine(new SatisfiesNeed(), new OrderIgnored());
 		assertTrue(judgment instanceof OrderIgnored);
 		
-		judgment = judgmentCombinator.combine(new RotoberHarmed(), new RotoberHarmed());
-		assertTrue(judgment instanceof RotoberHarmed);
-		judgment = judgmentCombinator.combine(new RotoberHarmed(), new SatisfiesNeed());
-		assertTrue(judgment instanceof RotoberHarmed);
-		judgment = judgmentCombinator.combine(new SatisfiesNeed(), new RotoberHarmed());
-		assertTrue(judgment instanceof RotoberHarmed);
+		judgment = judgmentCombinator.combine(new RobotHarmed(), new RobotHarmed());
+		assertTrue(judgment instanceof RobotHarmed);
+		judgment = judgmentCombinator.combine(new RobotHarmed(), new SatisfiesNeed());
+		assertTrue(judgment instanceof RobotHarmed);
+		judgment = judgmentCombinator.combine(new SatisfiesNeed(), new RobotHarmed());
+		assertTrue(judgment instanceof RobotHarmed);
 
 		SatisfiesNeed satisfaction = new SatisfiesNeed();
 		satisfaction.addSatisfaction(Need.NOT_BORED, 50);

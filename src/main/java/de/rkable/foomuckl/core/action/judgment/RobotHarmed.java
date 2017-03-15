@@ -5,6 +5,6 @@ package de.rkable.foomuckl.core.action.judgment;
  * @author Mark
  *
  */
-public class RotoberHarmed implements Judgment {
+public class RobotHarmed implements Judgment {
 
 }

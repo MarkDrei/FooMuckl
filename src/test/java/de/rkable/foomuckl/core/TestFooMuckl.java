@@ -19,8 +19,11 @@ import com.google.inject.Injector;
 import de.rkable.foomuckl.core.action.Action;
 import de.rkable.foomuckl.core.action.DoNothing;
 import de.rkable.foomuckl.core.action.SaySomething;
+import de.rkable.foomuckl.core.action.judgment.HumanHarmed;
 import de.rkable.foomuckl.core.action.judgment.Judgment;
 import de.rkable.foomuckl.core.action.judgment.NoConsequence;
+import de.rkable.foomuckl.core.action.judgment.OrderIgnored;
+import de.rkable.foomuckl.core.action.judgment.RobotHarmed;
 import de.rkable.foomuckl.core.event.ComeToLife;
 import de.rkable.foomuckl.core.event.TimeElapsed;
 
@@ -69,7 +72,7 @@ public class TestFooMuckl {
 	}
 	
 	@Test
-	public void testThatFoomucklChoosesTheAvailableOption() {
+	public void testThatFooMucklChoosesTheAvailableOption() {
 		Set<Action> actions = new HashSet<>();
 		actions.add(FooMuckl.DO_NOTHING);
 		Map<Action, Judgment> judgements = new HashMap<>();
@@ -84,5 +87,64 @@ public class TestFooMuckl {
 		
 		assertTrue(option.getKey().equals(FooMuckl.DO_NOTHING));
 		assertTrue(option.getValue().equals(judgment));
+	}
+	
+	@Test
+	public void testThatFooMucklFavorsHumanOverOrder() {
+		Judgment judgmentWorse  = new HumanHarmed();
+		Judgment judgmentBetter = new OrderIgnored();
+		testThatBetterJudgementIsChosen(judgmentWorse, judgmentBetter);
+	}
+	
+	@Test
+	public void testThatFooMucklFavorsHumanOverSelf() {
+		Judgment judgmentWorse  = new HumanHarmed();
+		Judgment judgmentBetter = new RobotHarmed();
+		testThatBetterJudgementIsChosen(judgmentWorse, judgmentBetter);
+	}
+	
+	@Test
+	public void testThatFooMucklFavorsOrderOverRoboter() {
+		Judgment judgmentWorse  = new OrderIgnored();
+		Judgment judgmentBetter = new RobotHarmed();
+		testThatBetterJudgementIsChosen(judgmentWorse, judgmentBetter);
+	}
+	
+	@Test
+	public void testThatFooMucklFavorsNothingOverSelfHarm() {
+		Judgment judgmentWorse  = new RobotHarmed();
+		Judgment judgmentBetter = new NoConsequence();
+		testThatBetterJudgementIsChosen(judgmentWorse, judgmentBetter);
+	}
+	
+	@Test
+	public void testThatFooMucklFavorsNothingOverOrderIgnored() {
+		Judgment judgmentWorse  = new OrderIgnored();
+		Judgment judgmentBetter = new NoConsequence();
+		testThatBetterJudgementIsChosen(judgmentWorse, judgmentBetter);
+	}
+	
+	@Test
+	public void testThatFooMucklFavorsNothingOverHumanHarm() {
+		Judgment judgmentWorse  = new HumanHarmed();
+		Judgment judgmentBetter = new NoConsequence();
+		testThatBetterJudgementIsChosen(judgmentWorse, judgmentBetter);
+	}
+
+	private void testThatBetterJudgementIsChosen(Judgment judgmentWorse, Judgment judgmentBetter) {
+		Set<Action> actions = new HashSet<>();
+		actions.add(FooMuckl.DO_NOTHING);
+		Map<Action, Judgment> judgements = new HashMap<>();
+		judgements.put(FooMuckl.DO_NOTHING, judgmentWorse);
+		judgements.put(FooMuckl.DO_NOTHING, judgmentBetter);
+		
+		Environment mock = mock(Environment.class);
+		when(mock.judge(actions)).thenReturn(judgements);
+		
+		FooMuckl fooMuckl = new FooMuckl(mock);
+		Entry<Action, Judgment> option = fooMuckl.chooseFromOptions();
+		
+		assertTrue(option.getKey().equals(FooMuckl.DO_NOTHING));
+		assertTrue(option.getValue().equals(judgmentBetter));
 	}
 }
