@@ -8,9 +8,9 @@ public class Starter {
 	private static final int INTERVALL = 100;
 
 	public static void main(String[] args) {
-		Injector injector = Guice.createInjector(new FooModule());
+		Injector injector = Guice.createInjector(new FooModuleCommandLine());
 		Lifecycle instance = injector.getInstance(Lifecycle.class);
-		
+
 		for(;;) {
 			try {
 				Thread.sleep(INTERVALL);

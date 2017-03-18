@@ -8,6 +8,8 @@ repositories {
 }
 
 dependencies {
+	compile project(':core')
+   
 	// https://mvnrepository.com/artifact/com.google.inject/guice
 	compile group: 'com.google.inject', name: 'guice', version: '3.0'
 	// https://mvnrepository.com/artifact/org.mockito/mockito-all
