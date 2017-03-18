@@ -3,4 +3,6 @@ jdk:
   - oraclejdk8
    
 script: 
+- cd Core
 - gradle test
+- cd ..
