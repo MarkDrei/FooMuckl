@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import com.google.inject.Inject;
 
@@ -14,7 +16,6 @@ import de.rkable.foomuckl.core.action.DoNothing;
 import de.rkable.foomuckl.core.action.SaySomething;
 import de.rkable.foomuckl.core.action.judgment.HumanHarmed;
 import de.rkable.foomuckl.core.action.judgment.Judgment;
-import de.rkable.foomuckl.core.action.judgment.NoConsequence;
 import de.rkable.foomuckl.core.action.judgment.OrderIgnored;
 import de.rkable.foomuckl.core.action.judgment.RobotHarmed;
 import de.rkable.foomuckl.core.action.judgment.SatisfiesNeed;
@@ -26,55 +27,55 @@ import de.rkable.foomuckl.core.event.TimeElapsed;
 /**
  * FooMuckl is an automaton. It collects inputs, evaluates its options and
  * then can trigger actions
- * 
+ *
  * @author Mark
  *
  */
 public class FooMuckl {
-	
+
 	final static Action DO_NOTHING = new DoNothing();
 	private final static Action ACTION_BORED = new SaySomething("I am bored!", false);
-	
+
 	// injected dependencies
-	
+
 	// needs section
 	int boredom = 0;
-	
+
 	private List<Event> inputs = new ArrayList<>();
 	private Set<Action> options = new HashSet<>();
 
 	private Environment environment;
-	
+
 	@Inject public FooMuckl(Environment environment) {
 		this.environment = environment;
 	}
-	
+
 	/**
 	 * Added an input. FooMuckl will evaluate all inputs in due time.
-	 * 
-	 * @param input The input to be added 
+	 *
+	 * @param input The input to be added
 	 */
 	public void addInput(Event input) {
 		inputs.add(input);
 	}
-	
+
 	/**
 	 * Evaluates the current options based on the received inputs
 	 * and returns the action and the predicted outcome.
 	 */
 	public Entry<Action, Judgment> chooseFromOptions() {
-		
+
 		processInputs();
 
 		updateOptions();
-		
+
 		Entry<Action, Judgment> choice = chooseOption();
-		
+
 		options.remove(choice.getKey());
 		return choice;
 	}
 
-	
+
 	/**
 	 * Applies the consequences of a judgment
 	 * @param value
@@ -91,81 +92,44 @@ public class FooMuckl {
 	 */
 	private Entry<Action, Judgment> chooseOption() {
 		Map<Action, Judgment> judgments = environment.judge(options);
-		
-		Entry<Action, Judgment> bestSatisfaction = null;
-		
-		Entry<Action, Judgment> noConsequence = null;
-		Entry<Action, Judgment> roboterHarmed = null;
-		Entry<Action, Judgment> orderIgnored = null;
-		Entry<Action, Judgment> humanHarmed = null;
-		
-		for (Entry<Action, Judgment> e : judgments.entrySet()) {
-			Judgment value = e.getValue();
-			if (value instanceof SatisfiesNeed) {
-				if (bestSatisfaction == null) {
-					bestSatisfaction = e;
-				} else {
-					bestSatisfaction = getBetterSatisfaction(e, bestSatisfaction);
-				}
-				continue;
-			} else if (value instanceof NoConsequence) {
-				noConsequence = e;
-			} else if (value instanceof RobotHarmed) {
-				roboterHarmed = e;
-			} else if (value instanceof OrderIgnored) {
-				orderIgnored = e;
-			} else if (value instanceof HumanHarmed) {
-				humanHarmed = e;
-			}
-		}
-		
-		if (bestSatisfaction != null && satisfactionWanted((SatisfiesNeed) bestSatisfaction.getValue())) return bestSatisfaction;
-		if (noConsequence != null) return noConsequence;
-		if (bestSatisfaction != null) return bestSatisfaction;
-		
-		// here we are entering the zone of danger!
-		if (roboterHarmed != null) return roboterHarmed;
-		if (orderIgnored != null) return orderIgnored;
-		if (humanHarmed != null) return humanHarmed;
+		SortedSet<Entry<Action, Judgment>> sortedJudgements = new TreeSet<>((entry1, entry2) -> {
+			int value1 = mapToInteger(entry1.getValue());
+			int value2 = mapToInteger(entry2.getValue());
+			System.out.println(entry1.getValue() + " vs " + entry2.getValue() + " = " + (value1 - value2));
+			return value1 - value2;
+		});
 
-		// should not happen
-		throw new IllegalStateException();
+		sortedJudgements.addAll(judgments.entrySet());
+		return sortedJudgements.last();
 	}
 
 	/**
-	 * Judge whether the satisfaction fulfills any current needs
-	 * 
+	 * Maps a judgment to a value how desired it is.
 	 * @param value
-	 * @return
+	 * @return The integer describing the judgment, smaller values refer to worse outcomes
 	 */
-	private boolean satisfactionWanted(SatisfiesNeed value) {
-		if (value.getSatisfaction(Need.SHARE_INFORMATION) > 0) {
-			return true;
+	public int mapToInteger(Judgment value) {
+		int MIN_VALUE = Integer.MIN_VALUE / 2;
+		if (value instanceof HumanHarmed) return MIN_VALUE;
+		if (value instanceof OrderIgnored) return MIN_VALUE + 1;
+		if (value instanceof RobotHarmed) return MIN_VALUE + 2;
+
+		if (value instanceof SatisfiesNeed) {
+			int score = judgeBoredom((SatisfiesNeed) value);
+			score += judgeShareInformation((SatisfiesNeed) value);
+			// never get over values that check for Asimov's laws
+			return (Math.max(score, 0));
 		}
-		if (value.getSatisfaction(Need.NOT_BORED) > 0 && boredom > 0) {
-			return true;
-		}
-		return false;
+
+		return 0;
 	}
 
-	private Entry<Action, Judgment> getBetterSatisfaction(Entry<Action, Judgment> oneVal, Entry<Action, Judgment> twoVal) {
-		if (twoVal == null) {
-			return oneVal;
-		}
-		SatisfiesNeed one = (SatisfiesNeed) oneVal.getValue();
-		SatisfiesNeed two = (SatisfiesNeed) twoVal.getValue();
+	private int judgeShareInformation(SatisfiesNeed value) {
+		return value.getSatisfaction(Need.SHARE_INFORMATION) * 10000;
+	}
 
-		if (one.getSatisfaction(Need.SHARE_INFORMATION) > two.getSatisfaction(Need.SHARE_INFORMATION)) {
-			return oneVal;
-		}
-		if (one.getSatisfaction(Need.SHARE_INFORMATION) < two.getSatisfaction(Need.SHARE_INFORMATION)) {
-			return twoVal;
-		}
-		
-		if (one.getSatisfaction(Need.NOT_BORED) > two.getSatisfaction(Need.NOT_BORED)) {
-			return oneVal;
-		}
-		return twoVal;
+	private int judgeBoredom(SatisfiesNeed value) {
+		return Math.min(boredom, value.getSatisfaction(Need.NOT_BORED));
 	}
 
 	/**
@@ -181,7 +145,7 @@ public class FooMuckl {
 
 	/**
 	 * Processes all inputs.
-	 * Inputs which can currently be processed will be removed, and 
+	 * Inputs which can currently be processed will be removed, and
 	 * potentially options will be created.
 	 */
 	private void processInputs() {
