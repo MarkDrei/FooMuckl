@@ -95,7 +95,7 @@ public class FooMuckl {
 		SortedSet<Entry<Action, Judgment>> sortedJudgements = new TreeSet<>((entry1, entry2) -> {
 			int value1 = mapToInteger(entry1.getValue());
 			int value2 = mapToInteger(entry2.getValue());
-			System.out.println(entry1.getValue() + " vs " + entry2.getValue() + " = " + (value1 - value2));
+//			System.out.println(entry1.getValue() + " vs " + entry2.getValue() + " = " + (value1 - value2));
 			return value1 - value2;
 		});
 
